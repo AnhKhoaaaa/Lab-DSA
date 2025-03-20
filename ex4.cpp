@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 using namespace std;
 
 void towerOfHanoi(int n,char from, char to, char aux){
