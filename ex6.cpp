@@ -26,14 +26,14 @@ bool isSafe(int row,int col){
 
 void NqueensSolve( int row){
     if(row==N){
-        solution++;
+        solution++; //increase count if placed N queens to the chess board
         return;
     }
     for(int col=0;col<N;col++){
         if(isSafe(row,col)){
             chessBoard[row][col]=1;
             NqueensSolve(row+1);
-            chessBoard[row][col]=0;
+            chessBoard[row][col]=0; //reset the chessBoard to 0 to try other possible solution
         }
     }
 }
