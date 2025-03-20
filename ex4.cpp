@@ -2,8 +2,10 @@
 using namespace std;
 
 void towerOfHanoi(int n,char from, char to, char aux){
+    //the main idea is to put n-1 disk to the aux-nod and then put the n disk to to-nod,
+    //we divide the problem to smaller problem by recursion and solve it from 1 disk problem to n disks problem
     if(n==1){
-        cout<<"Move disk 1 from "<<from<<" to "<<to<<endl;
+        cout<<"Moved disk 1 from "<<from<<" to "<<to<<endl;
         return;
     }
     towerOfHanoi(n-1,from,aux,to);
