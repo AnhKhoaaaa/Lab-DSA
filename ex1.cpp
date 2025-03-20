@@ -7,7 +7,7 @@ int fibonacci(int n)
         return 0;
     if (n == 1)
         return 1;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+    return fibonacci(n - 1) + fibonacci(n - 2); //recursion call to find two previous elements of the array.
 }
 
 int main()
