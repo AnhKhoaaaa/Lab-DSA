@@ -8,7 +8,9 @@ bool isSorted(int* a, int n){
     if(a[0]>a[1]){
         return false;
     }
-    return isSorted(a+1,n-1);
+    return isSorted(a+1,n-1); 
+    //instead of traversal the array with loop, we increase the pointer and decrease the n by recursion
+    //so that we can still check all the elements of the array is sorted or not. 
 }
 
 int main(){
