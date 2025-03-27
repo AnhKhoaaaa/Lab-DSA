@@ -9,16 +9,16 @@ int minOfRotatedArray(int *a, int n)
     {
         return a[left];
     }
-    while (left <= right)
+    while (left < right)
     {
-        int mid = (right + left) / 2;
+        int mid = left + (right - left) / 2;
         if (a[mid] > a[right])
         {
-            left = mid + 1;
+            left = mid+1;
         }
         else
         {
-            right = mid - 1;
+            right = mid;
         }
     }
     return a[left];
@@ -26,7 +26,7 @@ int minOfRotatedArray(int *a, int n)
 
 int main()
 {
-    int n, k;
+    int n;
     cin >> n;
     int *a = new int[n];
     for (int i = 0; i < n; i++)
@@ -34,5 +34,6 @@ int main()
         cin >> a[i];
     }
     cout << minOfRotatedArray(a, n) << endl;
+    delete [] a;
     return 0;
 }

@@ -25,5 +25,6 @@ int main()
     }
     cin >> k;
     cout << linearSearch(a, n, k) << endl;
+    delete [] a;
     return 0;
 }

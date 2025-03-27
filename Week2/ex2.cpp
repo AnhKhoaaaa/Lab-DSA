@@ -32,5 +32,6 @@ int main()
     }
     cin >> k;
     cout << linearSearchWithSentinel(a, n, k) << endl;
+    delete [] a;
     return 0;
 }
