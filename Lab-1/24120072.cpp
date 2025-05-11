@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-//DEFINITION:
+//DECLARATION:
 
 //Stack implement:
 struct NODE{
@@ -39,7 +39,6 @@ string evaluatePostfix(vector<string> postfix);
 
 //Main function
 int main(int argc,char* argv[]){
-
     //Read command-line arguments:
     if(argc!=3){
         cout<<"Unidentify command!"<<endl;
@@ -82,7 +81,7 @@ int main(int argc,char* argv[]){
     out.close();
 }
 
-//DECLARATION:
+//DEFINITION:
 
 //Stack implement:
 Stack* initializeStack(){   
@@ -125,20 +124,6 @@ int size(Stack *s){
             cur=cur->p_next;
         }
         return count;
-    }
-}
-void printReverse(NODE* top) {
-    if (top == nullptr) return;
-    printReverse(top->p_next);
-    cout << top->key << " ";
-}
-void printStack(Stack *s){
-    if(isEmpty(s)){
-        cout << "EMPTY" << endl;
-    }
-    else{
-        printReverse(s->top);
-        cout << endl;
     }
 }
 void freeStack(Stack*& s){
@@ -265,7 +250,7 @@ string multiplyStrings(string a, string b){
     return result;
 }
 string divideStrings(string a, string b){
-    if(b=="0") return "Can not divide with 0";
+    if(b=="0") return "Error";
     //make sure a>b when divide
     if(compareStrings(a,b)==-1){
         return "0";
@@ -280,10 +265,10 @@ string divideStrings(string a, string b){
     while(i<a.length()){
         cur=cur+a[i];
         i++;
-        while (cur.length() > 1 && cur[0] == '0') {
+        while (cur.length()>1 && cur[0]=='0') {
             cur=cur.substr(1);
         }
-        if(compareStrings(cur,b)==-1){
+        if(compareStrings(cur,b)==-1){ //if cur<b and res already have value, add '0' after res.
             if(!res.empty()){
                 res=res+'0';
             }
@@ -310,7 +295,7 @@ int prioritize(char a){
 }
 
 vector<string> infixToPostfix(string expression){
-    bool justAddOp=true;
+    bool justAddOp=true; //Check if two operators or operands next to each other.
     vector<string> postFix;
     Stack* s= initializeStack();
     int n=expression.length();
@@ -318,10 +303,10 @@ vector<string> infixToPostfix(string expression){
     while(i<n){
         if(expression[i]==' '){
             i++;
-            //skip space
+            //skip space.
         }
         else if(isdigit(expression[i])){
-            if(justAddOp==false){
+            if(justAddOp==false){ //exist two operands next to each other.
                 freeStack(s);
                 return {};
             }
@@ -331,11 +316,14 @@ vector<string> infixToPostfix(string expression){
                 number=number+expression[i];
                 i++;
             }
+            while(number.size()>1 && number[0]=='0'){ //remove all unnecessary '0'
+                number=number.substr(1);
+            }
             //add big int to vector postFix.
             postFix.push_back(number);
         }
         else if(expression[i]=='('){
-            while(expression[i+1]==' '){
+            while(expression[i+1]==' '){ //delete space.
                 i++;
             }
             if(expression[i+1]=='-'){
@@ -343,39 +331,39 @@ vector<string> infixToPostfix(string expression){
                 string number="";
                 number=number+expression[i];
                 i++;
-                while(expression[i]==' '){
+                while(expression[i]==' '){ //delete space.
                     i++;
                 }
                 while(i<n && isdigit(expression[i])){
                     number=number+expression[i];
                     i++;
                 }
-                while(expression[i]==' '){
+                while(expression[i]==' '){ //delete space.
                     i++;
                 }
-                if(number=="-"){
+                if(number=="-"){ //Case: (-) with no number.
                     freeStack(s);
                     return {};
                 }
                 postFix.push_back(number);
-                if(justAddOp==false){
+                if(justAddOp==false){ //exist two operands next to each other: 3 (-3)
                     freeStack(s);
                     return {};
                 }
                 justAddOp=false;
                 if(expression[i]==')'){
-                    i++;//skip ')'
+                    i++; //skip ')'
                 }
-                else{
+                else{ //missing ')'
                     freeStack(s);
                     return {};
                 }
             }
-            else if(isdigit(expression[i+1])||expression[i+1]=='('){
+            else if(isdigit(expression[i+1])||expression[i+1]=='('){ //case: (24) or ((4+3)).
                 push(s,'(');
                 i++;
             }
-            else{
+            else{ //case: (+5)
                     freeStack(s);
                     return {};
             }
@@ -386,11 +374,11 @@ vector<string> infixToPostfix(string expression){
                 string op=string(1, pop(s));
                 postFix.push_back(op);
             }
-            if(isEmpty(s)){
+            if(isEmpty(s)){ //Missing '('.
                 freeStack(s);
                 return {};
             }
-            if(justAddOp){
+            if(justAddOp){ //Case: (5+)
                 freeStack(s);
                 return {};
             }
@@ -399,32 +387,32 @@ vector<string> infixToPostfix(string expression){
             i++;
         }
         else{
-            if(prioritize(expression[i])==0){
+            if(prioritize(expression[i])==0){ //Other characters like: abc&#@!$...
                 freeStack(s);
                 return {};
             }
-            while(!isEmpty(s) && prioritize(s->top->key) >= prioritize(expression[i])){
+            //operators with larger prioitize go to postfix first.
+            while(!isEmpty(s) && (prioritize(s->top->key) >= prioritize(expression[i]))){
                 string op=string(1, pop(s));
                 postFix.push_back(op);
             }
-            if(!justAddOp){
+            if(!justAddOp){ //An operator after an operand.
                 push(s,expression[i]);
                 justAddOp=true;
                 i++;  
             }
-            //If exist 2 operator next to each other.
-            else{
+            else{ //exist 2 operators next to each other.
                 freeStack(s);
                 return {};
             }  
         }
     }
-    if(justAddOp){
+    if(justAddOp){ //Case: 3 + 5 +
         freeStack(s);
         return {};
     }
-    while(!isEmpty(s)){
-        if(s->top->key=='('){
+    while(!isEmpty(s)){ //push all remaining operators to postfix.
+        if(s->top->key=='('){ //Missing ')'
             freeStack(s);
             return {};
         }
@@ -435,14 +423,14 @@ vector<string> infixToPostfix(string expression){
     return postFix;
 }
 string evaluatePostfix(vector<string> postfix){
-    vector<string> nums;
-    if(postfix.empty()){
-        return "Syntax Error!";
+    if(postfix.empty()){ //Every syntax error in expression will return an empty vector.
+        return "Error";
     }
+    vector<string> nums;
     for(string value:postfix){
         if(value=="-"||value=="+"||value=="*"||value=="/"){
-            if(nums.size()<2){
-                return "Syntax Error!";
+            if(nums.size()<2){ //Not enough operand before an operator to calculate.
+                return "Error";
             }
             string a=nums.back();
             nums.pop_back();
@@ -523,10 +511,10 @@ string evaluatePostfix(vector<string> postfix){
                     res=divideStrings(a,b);
                 }
             }
-            if(res=="Can not divide with 0"){
+            if(res=="Error"){
                 return res;
             }
-            while (res.length() > 1 && res[0] == '0') {
+            while (res.length() > 1 && res[0] == '0') { //delete unnecessary '0'.
                 res=res.substr(1);
             }
             nums.push_back(res);
@@ -535,8 +523,8 @@ string evaluatePostfix(vector<string> postfix){
             nums.push_back(value);
         }
     }
-    if(nums.size()!=1){
-        return "Syntax Error!";
+    if(nums.size()!=1){ //Vector have not only the result but another operands.
+        return "Error";
     }
-    return nums.back();
+    return nums.back(); //the only value in vector is the result.
 }
